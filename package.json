@@ -1,5 +1,6 @@
 {
   "name": "mcp-eval-runner",
+  "mcpName": "io.github.dbsectrainer/mcp-eval-runner",
   "version": "1.0.0",
   "description": "A standardized testing harness for MCP servers and agent workflows",
   "author": "dbsectrainer",
@@ -35,7 +36,8 @@
     "inspect": "npx @modelcontextprotocol/inspector node dist/index.js",
     "lint": "eslint src tests",
     "format": "prettier --write src tests",
-    "format:check": "prettier --check src tests"
+    "format:check": "prettier --check src tests",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.0",
