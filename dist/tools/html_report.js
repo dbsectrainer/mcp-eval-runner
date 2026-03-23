@@ -5,57 +5,58 @@
  * All styles are inlined — no external CDN required.
  */
 function escapeHtml(s) {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+    return s
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
 }
 function statusBadge(status) {
-  const color = status === "pass" ? "#22c55e" : status === "fail" ? "#ef4444" : "#f59e0b";
-  return `<span style="display:inline-block;padding:2px 8px;border-radius:4px;background:${color};color:#fff;font-weight:bold;font-size:.85em">${escapeHtml(status)}</span>`;
+    const color = status === "pass" ? "#22c55e" : status === "fail" ? "#ef4444" : "#f59e0b";
+    return `<span style="display:inline-block;padding:2px 8px;border-radius:4px;background:${color};color:#fff;font-weight:bold;font-size:.85em">${escapeHtml(status)}</span>`;
 }
 function assertionRows(assertions) {
-  if (assertions.length === 0) {
-    return `<tr><td colspan="3" style="color:#888;font-style:italic">no assertions</td></tr>`;
-  }
-  return assertions
-    .map((a) => {
-      const color = a.passed ? "#22c55e" : "#ef4444";
-      return `<tr>
+    if (assertions.length === 0) {
+        return `<tr><td colspan="3" style="color:#888;font-style:italic">no assertions</td></tr>`;
+    }
+    return assertions
+        .map((a) => {
+        const color = a.passed ? "#22c55e" : "#ef4444";
+        return `<tr>
         <td style="color:${color}">${a.passed ? "✓" : "✗"}</td>
         <td><code>${escapeHtml(a.type)}</code></td>
         <td style="color:${color}">${escapeHtml(a.message)}</td>
       </tr>`;
     })
-    .join("\n");
+        .join("\n");
 }
 export function generateHtmlReportTool(runId, db) {
-  const run = db.getRunById(runId);
-  if (!run) {
-    throw new Error(`Run not found: ${runId}`);
-  }
-  const cases = db.getCaseResultsForRun(runId);
-  const duration = run.ended_at !== null ? `${run.ended_at - run.started_at}ms` : "—";
-  const overallColor = run.failed === 0 ? "#22c55e" : "#ef4444";
-  const caseRows = cases
-    .map((c) => {
-      const caseColor =
-        c.status === "pass" ? "#22c55e" : c.status === "fail" ? "#ef4444" : "#f59e0b";
-      // Parse assertions_json — it is an array of AssertionResult[][]
-      // (one array of assertion results per step)
-      let stepsAssertions = [];
-      try {
-        if (c.assertions_json) {
-          stepsAssertions = JSON.parse(c.assertions_json);
+    const run = db.getRunById(runId);
+    if (!run) {
+        throw new Error(`Run not found: ${runId}`);
+    }
+    const cases = db.getCaseResultsForRun(runId);
+    const duration = run.ended_at !== null ? `${run.ended_at - run.started_at}ms` : "—";
+    const overallColor = run.failed === 0 ? "#22c55e" : "#ef4444";
+    const caseRows = cases
+        .map((c) => {
+        const caseColor = c.status === "pass" ? "#22c55e" : c.status === "fail" ? "#ef4444" : "#f59e0b";
+        // Parse assertions_json — it is an array of AssertionResult[][]
+        // (one array of assertion results per step)
+        let stepsAssertions = [];
+        try {
+            if (c.assertions_json) {
+                stepsAssertions = JSON.parse(c.assertions_json);
+            }
         }
-      } catch {
-        // ignore parse errors
-      }
-      const assertionSections = stepsAssertions
-        .map((stepAssertions, idx) => {
-          if (stepAssertions.length === 0) return "";
-          return `<details style="margin-top:8px">
+        catch {
+            // ignore parse errors
+        }
+        const assertionSections = stepsAssertions
+            .map((stepAssertions, idx) => {
+            if (stepAssertions.length === 0)
+                return "";
+            return `<details style="margin-top:8px">
             <summary style="cursor:pointer;color:#aaa">Step ${idx + 1} assertions (${stepAssertions.length})</summary>
             <table style="width:100%;margin-top:4px;border-collapse:collapse">
               <thead><tr>
@@ -67,8 +68,8 @@ export function generateHtmlReportTool(runId, db) {
             </table>
           </details>`;
         })
-        .join("");
-      return `<tr>
+            .join("");
+        return `<tr>
         <td style="padding:12px 8px;font-weight:bold;color:${caseColor}">${escapeHtml(c.case_name)}</td>
         <td style="padding:12px 8px">${statusBadge(c.status)}</td>
         <td style="padding:12px 8px;color:#888">${c.duration_ms !== null ? `${c.duration_ms}ms` : "—"}</td>
@@ -78,8 +79,8 @@ export function generateHtmlReportTool(runId, db) {
         </td>
       </tr>`;
     })
-    .join("\n");
-  return `<!DOCTYPE html>
+        .join("\n");
+    return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">

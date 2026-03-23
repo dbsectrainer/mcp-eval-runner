@@ -5,10 +5,10 @@ import type { EvalDb } from "../db.js";
 import type { RunnerOptions } from "../runner.js";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 export interface RunToolOptions {
-  fixturesDir: string;
-  db: EvalDb;
-  runnerOptions: RunnerOptions;
-  server?: McpServer;
+    fixturesDir: string;
+    db: EvalDb;
+    runnerOptions: RunnerOptions;
+    server?: McpServer;
 }
 /**
  * run_suite — execute all fixtures in the fixtures directory.

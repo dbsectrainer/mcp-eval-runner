@@ -13,44 +13,44 @@ import { loadFixturesFromDir } from "./fixture.js";
  * @param dirs - Array of directory paths to scan for fixtures
  */
 export function discoverFixtures(dirs) {
-  const seen = new Set();
-  const entries = [];
-  for (const dir of dirs) {
-    if (!fs.existsSync(dir)) {
-      continue;
-    }
-    const fixtures = loadFixturesFromDir(dir);
-    for (const fixture of fixtures) {
-      if (seen.has(fixture.name)) {
-        continue;
-      }
-      seen.add(fixture.name);
-      // Find the actual file path for this fixture
-      const candidates = [
-        path.join(dir, `${fixture.name}.yaml`),
-        path.join(dir, `${fixture.name}.yml`),
-        path.join(dir, `${fixture.name}.json`),
-        // Also try the sanitized name
-        path.join(dir, `${fixture.name.replace(/[^a-z0-9_-]/gi, "_")}.yaml`),
-        path.join(dir, `${fixture.name.replace(/[^a-z0-9_-]/gi, "_")}.yml`),
-        path.join(dir, `${fixture.name.replace(/[^a-z0-9_-]/gi, "_")}.json`),
-      ];
-      let filePath = dir;
-      for (const candidate of candidates) {
-        if (fs.existsSync(candidate)) {
-          filePath = candidate;
-          break;
+    const seen = new Set();
+    const entries = [];
+    for (const dir of dirs) {
+        if (!fs.existsSync(dir)) {
+            continue;
         }
-      }
-      entries.push({
-        name: fixture.name,
-        path: filePath,
-        suite_count: 1, // Each fixture file is one suite
-        case_count: fixture.steps.length,
-      });
+        const fixtures = loadFixturesFromDir(dir);
+        for (const fixture of fixtures) {
+            if (seen.has(fixture.name)) {
+                continue;
+            }
+            seen.add(fixture.name);
+            // Find the actual file path for this fixture
+            const candidates = [
+                path.join(dir, `${fixture.name}.yaml`),
+                path.join(dir, `${fixture.name}.yml`),
+                path.join(dir, `${fixture.name}.json`),
+                // Also try the sanitized name
+                path.join(dir, `${fixture.name.replace(/[^a-z0-9_-]/gi, "_")}.yaml`),
+                path.join(dir, `${fixture.name.replace(/[^a-z0-9_-]/gi, "_")}.yml`),
+                path.join(dir, `${fixture.name.replace(/[^a-z0-9_-]/gi, "_")}.json`),
+            ];
+            let filePath = dir;
+            for (const candidate of candidates) {
+                if (fs.existsSync(candidate)) {
+                    filePath = candidate;
+                    break;
+                }
+            }
+            entries.push({
+                name: fixture.name,
+                path: filePath,
+                suite_count: 1, // Each fixture file is one suite
+                case_count: fixture.steps.length,
+            });
+        }
     }
-  }
-  return entries;
+    return entries;
 }
 /**
  * Publish (copy) a fixture YAML/JSON file to the destination directory.
@@ -60,26 +60,26 @@ export function discoverFixtures(dirs) {
  * @param dest    - Destination directory path
  */
 export function publishFixture(fixture, dest) {
-  fs.mkdirSync(dest, { recursive: true });
-  // If fixture is a string, treat it as a file path to copy
-  if (typeof fixture === "string") {
-    const srcPath = fixture;
-    if (!fs.existsSync(srcPath)) {
-      throw new Error(`Fixture file not found: ${srcPath}`);
+    fs.mkdirSync(dest, { recursive: true });
+    // If fixture is a string, treat it as a file path to copy
+    if (typeof fixture === "string") {
+        const srcPath = fixture;
+        if (!fs.existsSync(srcPath)) {
+            throw new Error(`Fixture file not found: ${srcPath}`);
+        }
+        const fileName = path.basename(srcPath);
+        const destPath = path.join(dest, fileName);
+        fs.copyFileSync(srcPath, destPath);
+        return;
     }
-    const fileName = path.basename(srcPath);
-    const destPath = path.join(dest, fileName);
-    fs.copyFileSync(srcPath, destPath);
-    return;
-  }
-  // If fixture is an object, serialize it as YAML-like JSON and write
-  if (typeof fixture === "object" && fixture !== null) {
-    const obj = fixture;
-    const name = obj.name ?? "fixture";
-    const safeName = String(name).replace(/[^a-z0-9_-]/gi, "_");
-    const destPath = path.join(dest, `${safeName}.json`);
-    fs.writeFileSync(destPath, JSON.stringify(fixture, null, 2), "utf-8");
-    return;
-  }
-  throw new Error(`Invalid fixture: expected a file path string or fixture object`);
+    // If fixture is an object, serialize it as YAML-like JSON and write
+    if (typeof fixture === "object" && fixture !== null) {
+        const obj = fixture;
+        const name = obj.name ?? "fixture";
+        const safeName = String(name).replace(/[^a-z0-9_-]/gi, "_");
+        const destPath = path.join(dest, `${safeName}.json`);
+        fs.writeFileSync(destPath, JSON.stringify(fixture, null, 2), "utf-8");
+        return;
+    }
+    throw new Error(`Invalid fixture: expected a file path string or fixture object`);
 }

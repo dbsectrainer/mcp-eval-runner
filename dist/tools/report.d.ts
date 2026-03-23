@@ -9,8 +9,4 @@ export declare function regressionReportTool(fixturesDir: string, db: EvalDb): P
 /**
  * compare_results — diff two named run results by run ID.
  */
-export declare function compareResultsTool(
-  runIdA: string,
-  runIdB: string,
-  db: EvalDb,
-): Promise<string>;
+export declare function compareResultsTool(runIdA: string, runIdB: string, db: EvalDb): Promise<string>;

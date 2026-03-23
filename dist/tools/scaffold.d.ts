@@ -8,8 +8,4 @@
  * Scaffold a YAML fixture file and write it to the fixtures directory.
  * Returns the path to the created file.
  */
-export declare function scaffoldFixtureTool(
-  name: string,
-  toolNames: string[],
-  fixturesDir: string,
-): string;
+export declare function scaffoldFixtureTool(name: string, toolNames: string[], fixturesDir: string): string;

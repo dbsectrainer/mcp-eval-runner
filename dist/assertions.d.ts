@@ -16,57 +16,48 @@
  */
 import type { LlmJudgeAssertion } from "./llm-judge.js";
 export interface Assertion {
-  output_contains?: string;
-  output_not_contains?: string;
-  output_equals?: string;
-  output_matches?: string;
-  tool_called?: string;
-  latency_under?: number;
-  schema_match?: JsonSchema;
-  llm_judge?: LlmJudgeAssertion;
+    output_contains?: string;
+    output_not_contains?: string;
+    output_equals?: string;
+    output_matches?: string;
+    tool_called?: string;
+    latency_under?: number;
+    schema_match?: JsonSchema;
+    llm_judge?: LlmJudgeAssertion;
 }
 export interface JsonSchema {
-  type?: string;
-  properties?: Record<string, JsonSchema>;
-  required?: string[];
-  additionalProperties?: boolean | JsonSchema;
-  items?: JsonSchema;
-  [key: string]: unknown;
+    type?: string;
+    properties?: Record<string, JsonSchema>;
+    required?: string[];
+    additionalProperties?: boolean | JsonSchema;
+    items?: JsonSchema;
+    [key: string]: unknown;
 }
 export interface AssertionResult {
-  type: string;
-  passed: boolean;
-  message: string;
+    type: string;
+    passed: boolean;
+    message: string;
 }
 export interface StepResult {
-  tool: string;
-  output: string;
-  latency_ms: number;
+    tool: string;
+    output: string;
+    latency_ms: number;
 }
 /**
  * Evaluate a single assertion against a step result.
  */
-export declare function evaluateAssertion(
-  assertion: Assertion,
-  result: StepResult,
-): AssertionResult[];
+export declare function evaluateAssertion(assertion: Assertion, result: StepResult): AssertionResult[];
 /**
  * Evaluate all assertions for a step, returning aggregate pass/fail.
  */
-export declare function evaluateAllAssertions(
-  assertions: Assertion,
-  result: StepResult,
-): {
-  passed: boolean;
-  results: AssertionResult[];
+export declare function evaluateAllAssertions(assertions: Assertion, result: StepResult): {
+    passed: boolean;
+    results: AssertionResult[];
 };
 /**
  * Evaluate all assertions for a step including async assertion types (e.g. llm_judge).
  */
-export declare function evaluateAllAssertionsAsync(
-  assertions: Assertion,
-  result: StepResult,
-): Promise<{
-  passed: boolean;
-  results: AssertionResult[];
+export declare function evaluateAllAssertionsAsync(assertions: Assertion, result: StepResult): Promise<{
+    passed: boolean;
+    results: AssertionResult[];
 }>;

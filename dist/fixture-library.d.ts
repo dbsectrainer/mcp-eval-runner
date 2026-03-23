@@ -4,10 +4,10 @@
  * (copying) fixtures to a destination directory.
  */
 export interface FixtureEntry {
-  name: string;
-  path: string;
-  suite_count: number;
-  case_count: number;
+    name: string;
+    path: string;
+    suite_count: number;
+    case_count: number;
 }
 /**
  * Discover all fixture files across the given directories.

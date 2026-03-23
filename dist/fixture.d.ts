@@ -48,26 +48,26 @@
  */
 import type { Assertion } from "./assertions.js";
 export interface ServerConfig {
-  command: string;
-  args?: string[];
-  env?: Record<string, string>;
+    command: string;
+    args?: string[];
+    env?: Record<string, string>;
 }
 export interface FixtureStep {
-  id: string;
-  description?: string;
-  tool: string;
-  input: Record<string, unknown>;
-  expected_output?: string;
-  expect?: Assertion;
+    id: string;
+    description?: string;
+    tool: string;
+    input: Record<string, unknown>;
+    expected_output?: string;
+    expect?: Assertion;
 }
 export interface Fixture {
-  name: string;
-  description?: string;
-  server?: ServerConfig;
-  steps: FixtureStep[];
+    name: string;
+    description?: string;
+    server?: ServerConfig;
+    steps: FixtureStep[];
 }
 export declare class FixtureValidationError extends Error {
-  constructor(message: string);
+    constructor(message: string);
 }
 /**
  * Load and validate a fixture from a YAML or JSON file.

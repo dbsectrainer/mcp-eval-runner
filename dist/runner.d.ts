@@ -20,46 +20,38 @@ import { type AssertionResult } from "./assertions.js";
 import type { Fixture } from "./fixture.js";
 import type { EvalDb } from "./db.js";
 export interface StepRunResult {
-  step_id: string;
-  tool: string;
-  status: "pass" | "fail" | "error";
-  duration_ms: number;
-  output: string;
-  assertions: AssertionResult[];
-  error?: string;
-  mode: "live" | "simulation";
+    step_id: string;
+    tool: string;
+    status: "pass" | "fail" | "error";
+    duration_ms: number;
+    output: string;
+    assertions: AssertionResult[];
+    error?: string;
+    mode: "live" | "simulation";
 }
 export interface CaseRunResult {
-  case_name: string;
-  status: "pass" | "fail" | "error";
-  duration_ms: number;
-  steps: StepRunResult[];
-  error?: string;
+    case_name: string;
+    status: "pass" | "fail" | "error";
+    duration_ms: number;
+    steps: StepRunResult[];
+    error?: string;
 }
 export interface SuiteRunResult {
-  run_id: string;
-  suite_name: string;
-  started_at: number;
-  ended_at: number;
-  total_cases: number;
-  passed: number;
-  failed: number;
-  cases: CaseRunResult[];
+    run_id: string;
+    suite_name: string;
+    started_at: number;
+    ended_at: number;
+    total_cases: number;
+    passed: number;
+    failed: number;
+    cases: CaseRunResult[];
 }
 export interface RunnerOptions {
-  fixturesDir: string;
-  dbPath: string;
-  timeoutMs: number;
-  format: "console" | "json" | "html";
-  concurrency?: number;
+    fixturesDir: string;
+    dbPath: string;
+    timeoutMs: number;
+    format: "console" | "json" | "html";
+    concurrency?: number;
 }
-export declare function runCase(
-  fixture: Fixture,
-  options: Pick<RunnerOptions, "timeoutMs">,
-): Promise<CaseRunResult>;
-export declare function runSuite(
-  fixtures: Fixture[],
-  suiteName: string,
-  options: RunnerOptions,
-  db: EvalDb,
-): Promise<SuiteRunResult>;
+export declare function runCase(fixture: Fixture, options: Pick<RunnerOptions, "timeoutMs">): Promise<CaseRunResult>;
+export declare function runSuite(fixtures: Fixture[], suiteName: string, options: RunnerOptions, db: EvalDb): Promise<SuiteRunResult>;

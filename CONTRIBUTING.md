@@ -61,9 +61,9 @@ steps:
     description: "Call the tool and check the output"
     tool: list_cases
     input: {}
-    expected_output: "No fixtures found"   # used as output in simulation mode
+    expected_output: "No fixtures found" # used as output in simulation mode
     expect:
-      output_contains: "fixtures"          # all assertions go here
+      output_contains: "fixtures" # all assertions go here
       output_not_contains: "error"
       latency_under: 5000
 ```

@@ -9,103 +9,95 @@ const YELLOW = "\x1b[33m";
 const BOLD = "\x1b[1m";
 const DIM = "\x1b[2m";
 function pass(s) {
-  return `${GREEN}${s}${RESET}`;
+    return `${GREEN}${s}${RESET}`;
 }
 function fail(s) {
-  return `${RED}${s}${RESET}`;
+    return `${RED}${s}${RESET}`;
 }
 function warn(s) {
-  return `${YELLOW}${s}${RESET}`;
+    return `${YELLOW}${s}${RESET}`;
 }
 function bold(s) {
-  return `${BOLD}${s}${RESET}`;
+    return `${BOLD}${s}${RESET}`;
 }
 function dim(s) {
-  return `${DIM}${s}${RESET}`;
+    return `${DIM}${s}${RESET}`;
 }
 function statusIcon(status) {
-  switch (status) {
-    case "pass":
-      return pass("✓");
-    case "fail":
-      return fail("✗");
-    case "error":
-      return warn("!");
-  }
+    switch (status) {
+        case "pass":
+            return pass("✓");
+        case "fail":
+            return fail("✗");
+        case "error":
+            return warn("!");
+    }
 }
 function formatAssertions(assertions, indent) {
-  return assertions
-    .map((a) => {
-      const icon = a.passed ? pass("  ✓") : fail("  ✗");
-      return `${indent}${icon} [${a.type}] ${a.passed ? dim(a.message) : fail(a.message)}`;
+    return assertions
+        .map((a) => {
+        const icon = a.passed ? pass("  ✓") : fail("  ✗");
+        return `${indent}${icon} [${a.type}] ${a.passed ? dim(a.message) : fail(a.message)}`;
     })
-    .join("\n");
+        .join("\n");
 }
 function formatStep(step, indent = "    ") {
-  const icon = statusIcon(step.status);
-  const lines = [
-    `${indent}${icon} step:${step.step_id} (tool: ${step.tool}) ${dim(`${step.duration_ms}ms`)}`,
-  ];
-  if (step.assertions.length > 0) {
-    lines.push(formatAssertions(step.assertions, indent + "  "));
-  }
-  if (step.error) {
-    lines.push(`${indent}  ${fail("Error: " + step.error)}`);
-  }
-  return lines.join("\n");
+    const icon = statusIcon(step.status);
+    const lines = [
+        `${indent}${icon} step:${step.step_id} (tool: ${step.tool}) ${dim(`${step.duration_ms}ms`)}`,
+    ];
+    if (step.assertions.length > 0) {
+        lines.push(formatAssertions(step.assertions, indent + "  "));
+    }
+    if (step.error) {
+        lines.push(`${indent}  ${fail("Error: " + step.error)}`);
+    }
+    return lines.join("\n");
 }
 function formatCase(c) {
-  const icon = statusIcon(c.status);
-  const lines = [`  ${icon} ${bold(c.case_name)} ${dim(`(${c.duration_ms}ms)`)}`];
-  for (const step of c.steps) {
-    lines.push(formatStep(step));
-  }
-  if (c.error) {
-    lines.push(`    ${fail("Error: " + c.error)}`);
-  }
-  return lines.join("\n");
+    const icon = statusIcon(c.status);
+    const lines = [`  ${icon} ${bold(c.case_name)} ${dim(`(${c.duration_ms}ms)`)}`];
+    for (const step of c.steps) {
+        lines.push(formatStep(step));
+    }
+    if (c.error) {
+        lines.push(`    ${fail("Error: " + c.error)}`);
+    }
+    return lines.join("\n");
 }
 export function formatConsole(result) {
-  const lines = [];
-  lines.push("");
-  lines.push(bold(`MCP Eval Runner — Suite: ${result.suite_name}`));
-  lines.push(dim(`Run ID: ${result.run_id}`));
-  lines.push(
-    dim(
-      `Started: ${new Date(result.started_at).toISOString()}  Duration: ${result.ended_at - result.started_at}ms`,
-    ),
-  );
-  lines.push("");
-  for (const c of result.cases) {
-    lines.push(formatCase(c));
-  }
-  lines.push("");
-  const summary =
-    result.failed === 0
-      ? pass(`✓ ${result.passed}/${result.total_cases} passed`)
-      : fail(`✗ ${result.failed}/${result.total_cases} failed`) +
-        (result.passed > 0 ? `, ${pass(String(result.passed))} passed` : "");
-  lines.push(bold("Summary: ") + summary);
-  lines.push("");
-  return lines.join("\n");
+    const lines = [];
+    lines.push("");
+    lines.push(bold(`MCP Eval Runner — Suite: ${result.suite_name}`));
+    lines.push(dim(`Run ID: ${result.run_id}`));
+    lines.push(dim(`Started: ${new Date(result.started_at).toISOString()}  Duration: ${result.ended_at - result.started_at}ms`));
+    lines.push("");
+    for (const c of result.cases) {
+        lines.push(formatCase(c));
+    }
+    lines.push("");
+    const summary = result.failed === 0
+        ? pass(`✓ ${result.passed}/${result.total_cases} passed`)
+        : fail(`✗ ${result.failed}/${result.total_cases} failed`) +
+            (result.passed > 0 ? `, ${pass(String(result.passed))} passed` : "");
+    lines.push(bold("Summary: ") + summary);
+    lines.push("");
+    return lines.join("\n");
 }
 export function formatJson(result) {
-  return JSON.stringify(result, null, 2);
+    return JSON.stringify(result, null, 2);
 }
 export function formatHtml(result) {
-  const rows = result.cases
-    .map((c) => {
-      const color = c.status === "pass" ? "#22c55e" : c.status === "fail" ? "#ef4444" : "#f59e0b";
-      const stepsHtml = c.steps
-        .map((s) => {
-          const sc = s.status === "pass" ? "#22c55e" : "#ef4444";
-          const assertionsHtml = s.assertions
-            .map(
-              (a) =>
-                `<li style="color:${a.passed ? "#22c55e" : "#ef4444"}">${a.type}: ${escapeHtml(a.message)}</li>`,
-            )
-            .join("");
-          return `
+    const rows = result.cases
+        .map((c) => {
+        const color = c.status === "pass" ? "#22c55e" : c.status === "fail" ? "#ef4444" : "#f59e0b";
+        const stepsHtml = c.steps
+            .map((s) => {
+            const sc = s.status === "pass" ? "#22c55e" : "#ef4444";
+            const assertionsHtml = s.assertions
+                .map((a) => `<li style="color:${a.passed ? "#22c55e" : "#ef4444"}">${a.type}: ${escapeHtml(a.message)}</li>`)
+                .join("");
+            return `
           <tr>
             <td style="padding-left:2em;color:${sc}">${escapeHtml(s.step_id)}</td>
             <td>${escapeHtml(s.tool)}</td>
@@ -114,15 +106,15 @@ export function formatHtml(result) {
             <td><ul>${assertionsHtml}</ul></td>
           </tr>`;
         })
-        .join("");
-      return `
+            .join("");
+        return `
         <tr>
           <td colspan="5" style="font-weight:bold;color:${color}">${escapeHtml(c.case_name)} — ${c.status} (${c.duration_ms}ms)</td>
         </tr>
         ${stepsHtml}`;
     })
-    .join("");
-  return `<!DOCTYPE html>
+        .join("");
+    return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -153,19 +145,19 @@ export function formatHtml(result) {
 </html>`;
 }
 function escapeHtml(s) {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+    return s
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
 }
 export function formatResult(result, format) {
-  switch (format) {
-    case "json":
-      return formatJson(result);
-    case "html":
-      return formatHtml(result);
-    default:
-      return formatConsole(result);
-  }
+    switch (format) {
+        case "json":
+            return formatJson(result);
+        case "html":
+            return formatHtml(result);
+        default:
+            return formatConsole(result);
+    }
 }

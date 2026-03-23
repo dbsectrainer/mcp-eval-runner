@@ -86,20 +86,20 @@ Fixtures are YAML (or JSON) files placed in the fixtures directory. Each file de
 
 ### Top-level fields
 
-| Field | Required | Description |
-|---|---|---|
-| `name` | Yes | Unique name for the test case |
-| `description` | No | Human-readable description |
-| `server` | No | Server config — if present, runs in **live mode**; if absent, runs in **simulation mode** |
-| `steps` | Yes | Array of steps to execute |
+| Field         | Required | Description                                                                               |
+| ------------- | -------- | ----------------------------------------------------------------------------------------- |
+| `name`        | Yes      | Unique name for the test case                                                             |
+| `description` | No       | Human-readable description                                                                |
+| `server`      | No       | Server config — if present, runs in **live mode**; if absent, runs in **simulation mode** |
+| `steps`       | Yes      | Array of steps to execute                                                                 |
 
 ### `server` block (live mode)
 
 ```yaml
 server:
-  command: node          # executable to spawn
+  command: node # executable to spawn
   args: ["dist/index.js"] # arguments
-  env:                   # optional environment variables
+  env: # optional environment variables
     MY_VAR: "value"
 ```
 
@@ -109,23 +109,25 @@ When `server` is present the eval runner spawns the server as a child process, c
 
 Each step has the following fields:
 
-| Field | Required | Description |
-|---|---|---|
-| `id` | Yes | Unique identifier within the fixture (used for output piping) |
-| `tool` | Yes | MCP tool name to call |
-| `description` | No | Human-readable step description |
-| `input` | No | Key-value map of arguments passed to the tool (default: `{}`) |
-| `expected_output` | No | Literal string used as output in simulation mode |
-| `expect` | No | Assertions evaluated against the step output |
+| Field             | Required | Description                                                   |
+| ----------------- | -------- | ------------------------------------------------------------- |
+| `id`              | Yes      | Unique identifier within the fixture (used for output piping) |
+| `tool`            | Yes      | MCP tool name to call                                         |
+| `description`     | No       | Human-readable step description                               |
+| `input`           | No       | Key-value map of arguments passed to the tool (default: `{}`) |
+| `expected_output` | No       | Literal string used as output in simulation mode              |
+| `expect`          | No       | Assertions evaluated against the step output                  |
 
 ### Execution modes
 
 **Live mode** — fixture has a `server` block:
+
 - The server is spawned and each step calls the named tool via MCP stdio.
 - Assertions run against the real tool response.
 - Errors from the server cause the step (and by default the case) to fail immediately.
 
 **Simulation mode** — no `server` block:
+
 - No server is started.
 - Each step's output is taken from `expected_output` (or empty string if absent).
 - Assertions run against that static output.
@@ -137,13 +139,13 @@ All assertions go inside a step's `expect` block:
 
 ```yaml
 expect:
-  output_contains: "substring"          # output includes this text
-  output_not_contains: "error"          # output must NOT include this text
-  output_equals: "exact string"         # output exactly matches
-  output_matches: "regex pattern"       # output matches a regular expression
-  tool_called: "tool_name"             # verifies which tool was called
-  latency_under: 500                   # latency in ms must be below this threshold
-  schema_match:                        # output (parsed as JSON) matches JSON Schema
+  output_contains: "substring" # output includes this text
+  output_not_contains: "error" # output must NOT include this text
+  output_equals: "exact string" # output exactly matches
+  output_matches: "regex pattern" # output matches a regular expression
+  tool_called: "tool_name" # verifies which tool was called
+  latency_under: 500 # latency in ms must be below this threshold
+  schema_match: # output (parsed as JSON) matches JSON Schema
     type: object
     required: [id]
     properties:

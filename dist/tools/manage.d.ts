@@ -8,8 +8,4 @@ export declare function listCasesTool(fixturesDir: string): string;
 /**
  * create_test_case — create a new YAML fixture file.
  */
-export declare function createTestCaseTool(
-  name: string,
-  steps: unknown[],
-  fixturesDir: string,
-): string;
+export declare function createTestCaseTool(name: string, steps: unknown[], fixturesDir: string): string;

@@ -7,12 +7,12 @@
  */
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 export interface ServerOptions {
-  fixturesDir: string;
-  dbPath: string;
-  timeoutMs: number;
-  format: "console" | "json" | "html";
-  watch: boolean;
-  concurrency?: number;
+    fixturesDir: string;
+    dbPath: string;
+    timeoutMs: number;
+    format: "console" | "json" | "html";
+    watch: boolean;
+    concurrency?: number;
 }
 /**
  * Check whether the given requestId has been cancelled by the client.

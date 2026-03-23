@@ -8,10 +8,10 @@
  */
 import type { AssertionResult } from "./assertions.js";
 export interface LlmJudgeAssertion {
-  prompt_template: string;
-  min_score: number;
-  model: string;
-  expected?: string;
+    prompt_template: string;
+    min_score: number;
+    model: string;
+    expected?: string;
 }
 /**
  * Run an LLM-as-judge assertion.
@@ -21,8 +21,4 @@ export interface LlmJudgeAssertion {
  * Expects the LLM to respond with a JSON object containing a "score" field,
  * or a plain number.
  */
-export declare function runLlmJudge(
-  assertion: LlmJudgeAssertion,
-  actual: string,
-  expected: string,
-): Promise<AssertionResult>;
+export declare function runLlmJudge(assertion: LlmJudgeAssertion, actual: string, expected: string): Promise<AssertionResult>;

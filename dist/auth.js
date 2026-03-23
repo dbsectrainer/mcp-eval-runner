@@ -8,10 +8,10 @@ import crypto from "crypto";
  * Decode a base64url-encoded string to a UTF-8 string.
  */
 function _base64urlDecode(input) {
-  // Convert base64url to base64
-  const base64 = input.replace(/-/g, "+").replace(/_/g, "/");
-  const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), "=");
-  return Buffer.from(padded, "base64").toString("utf-8");
+    // Convert base64url to base64
+    const base64 = input.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), "=");
+    return Buffer.from(padded, "base64").toString("utf-8");
 }
 /**
  * Verify a JWT token using HMAC-SHA256 with the given secret.
@@ -19,25 +19,26 @@ function _base64urlDecode(input) {
  * Signature = HMAC-SHA256(secret, "header.payload")
  */
 function verifyJwt(token, secret) {
-  const parts = token.split(".");
-  if (parts.length !== 3) {
-    return false;
-  }
-  const [headerB64, payloadB64, signatureB64] = parts;
-  const signingInput = `${headerB64}.${payloadB64}`;
-  // Compute expected signature
-  const expectedSig = crypto.createHmac("sha256", secret).update(signingInput).digest("base64url");
-  // Constant-time comparison to prevent timing attacks
-  try {
-    const expectedBuf = Buffer.from(expectedSig, "base64url");
-    const actualBuf = Buffer.from(signatureB64, "base64url");
-    if (expectedBuf.length !== actualBuf.length) {
-      return false;
+    const parts = token.split(".");
+    if (parts.length !== 3) {
+        return false;
     }
-    return crypto.timingSafeEqual(expectedBuf, actualBuf);
-  } catch {
-    return false;
-  }
+    const [headerB64, payloadB64, signatureB64] = parts;
+    const signingInput = `${headerB64}.${payloadB64}`;
+    // Compute expected signature
+    const expectedSig = crypto.createHmac("sha256", secret).update(signingInput).digest("base64url");
+    // Constant-time comparison to prevent timing attacks
+    try {
+        const expectedBuf = Buffer.from(expectedSig, "base64url");
+        const actualBuf = Buffer.from(signatureB64, "base64url");
+        if (expectedBuf.length !== actualBuf.length) {
+            return false;
+        }
+        return crypto.timingSafeEqual(expectedBuf, actualBuf);
+    }
+    catch {
+        return false;
+    }
 }
 /**
  * Create Express authentication middleware.
@@ -48,35 +49,35 @@ function verifyJwt(token, secret) {
  * - If neither env var is set, passes through all requests.
  */
 export function createAuthMiddleware() {
-  return (req, res, next) => {
-    const apiKey = process.env.MCP_API_KEY;
-    const jwtSecret = process.env.MCP_JWT_SECRET;
-    // If neither auth mechanism is configured, pass through
-    if (!apiKey && !jwtSecret) {
-      next();
-      return;
-    }
-    // Validate X-API-Key if MCP_API_KEY is set
-    if (apiKey) {
-      const providedKey = req.headers["x-api-key"];
-      if (!providedKey || providedKey !== apiKey) {
-        res.status(401).json({ error: "Unauthorized: invalid or missing API key" });
-        return;
-      }
-    }
-    // Validate JWT Bearer token if MCP_JWT_SECRET is set
-    if (jwtSecret) {
-      const authHeader = req.headers["authorization"];
-      if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        res.status(401).json({ error: "Unauthorized: missing Bearer token" });
-        return;
-      }
-      const token = authHeader.slice("Bearer ".length).trim();
-      if (!verifyJwt(token, jwtSecret)) {
-        res.status(401).json({ error: "Unauthorized: invalid JWT signature" });
-        return;
-      }
-    }
-    next();
-  };
+    return (req, res, next) => {
+        const apiKey = process.env.MCP_API_KEY;
+        const jwtSecret = process.env.MCP_JWT_SECRET;
+        // If neither auth mechanism is configured, pass through
+        if (!apiKey && !jwtSecret) {
+            next();
+            return;
+        }
+        // Validate X-API-Key if MCP_API_KEY is set
+        if (apiKey) {
+            const providedKey = req.headers["x-api-key"];
+            if (!providedKey || providedKey !== apiKey) {
+                res.status(401).json({ error: "Unauthorized: invalid or missing API key" });
+                return;
+            }
+        }
+        // Validate JWT Bearer token if MCP_JWT_SECRET is set
+        if (jwtSecret) {
+            const authHeader = req.headers["authorization"];
+            if (!authHeader || !authHeader.startsWith("Bearer ")) {
+                res.status(401).json({ error: "Unauthorized: missing Bearer token" });
+                return;
+            }
+            const token = authHeader.slice("Bearer ".length).trim();
+            if (!verifyJwt(token, jwtSecret)) {
+                res.status(401).json({ error: "Unauthorized: invalid JWT signature" });
+                return;
+            }
+        }
+        next();
+    };
 }
