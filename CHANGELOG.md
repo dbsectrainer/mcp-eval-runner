@@ -7,12 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.1] - 2026-03-23
-
-### Fixed
-
-- **smoke fixture** (`evals/smoke.yaml`): the fixture previously ran in simulation mode because it had no `server` block. In simulation mode, `output_contains` assertions evaluate against `expected_output`, which was empty, so the assertion always failed. Fixed by adding a `server` block (`command: node`, `args: ["dist/index.js"]`) so the fixture now runs in live mode against the eval runner itself and the `output_contains: "smoke"` assertion passes against the real `list_cases` response.
-
 ## [1.0.0] - 2026-03-12
 
 ### Added
@@ -30,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **smoke fixture** (`evals/smoke.yaml`): added `server` block so the fixture runs in live mode against the eval runner itself instead of failing in simulation mode.
 - Prefixed unused `base64urlDecode` in `src/auth.ts` and `writeFixture` in `tests/fixture-library.test.ts` with `_` to satisfy `no-unused-vars` lint rule.
 
 ### Security
