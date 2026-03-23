@@ -1,0 +1,39 @@
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      fixturesDir:
+        type: string
+        description: "Path to test fixtures directory"
+      dbPath:
+        type: string
+        description: "Path to SQLite database file"
+      timeout:
+        type: number
+        description: "Test case timeout in milliseconds"
+        default: 30000
+      format:
+        type: string
+        description: "Output format for test results"
+        enum:
+          - console
+          - json
+          - html
+      concurrency:
+        type: number
+        description: "Number of test cases to run concurrently"
+        default: 1
+    required: []
+  commandFunction: |
+    (config) => ({
+      command: "node",
+      args: [
+        "dist/index.js",
+        ...(config.fixturesDir ? ["--fixtures", config.fixturesDir] : []),
+        ...(config.dbPath ? ["--db", config.dbPath] : []),
+        ...(config.timeout ? ["--timeout", String(config.timeout)] : []),
+        ...(config.format ? ["--format", config.format] : []),
+        ...(config.concurrency ? ["--concurrency", String(config.concurrency)] : [])
+      ]
+    })
