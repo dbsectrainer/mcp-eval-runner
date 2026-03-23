@@ -1,0 +1,63 @@
+name: mcp_filesystem_reference
+description: >
+  Reference eval suite for the official MCP Filesystem server
+  (github.com/modelcontextprotocol/servers/tree/main/src/filesystem).
+  Covers read, write, list, and search operations.
+  Set MCP_FS_CMD and MCP_FS_ROOT, or remove the server block for simulation mode.
+
+server:
+  command: node
+  args: ["${MCP_FS_CMD:-/usr/local/bin/mcp-filesystem}", "${MCP_FS_ROOT:-/tmp}"]
+
+steps:
+  - id: list_root
+    description: List the allowed root directory
+    tool: list_directory
+    input:
+      path: "/"
+    expected_output: "directory"
+    expect:
+      output_not_contains: "error"
+      latency_under: 3000
+
+  - id: write_file
+    description: Write a test file
+    tool: write_file
+    input:
+      path: "/eval-test-file.txt"
+      content: "mcp-eval-runner test content"
+    expected_output: "written"
+    expect:
+      output_not_contains: "error"
+      latency_under: 3000
+
+  - id: read_file
+    description: Read back the file we just wrote — uses step output piping
+    tool: read_file
+    input:
+      path: "/eval-test-file.txt"
+    expected_output: "mcp-eval-runner test content"
+    expect:
+      output_contains: "mcp-eval-runner test content"
+      latency_under: 3000
+
+  - id: search_files
+    description: Search for the test file by name
+    tool: search_files
+    input:
+      path: "/"
+      pattern: "eval-test-file"
+    expected_output: "eval-test-file.txt"
+    expect:
+      output_contains: "eval-test-file"
+      latency_under: 5000
+
+  - id: delete_file
+    description: Clean up — delete the test file
+    tool: delete_file
+    input:
+      path: "/eval-test-file.txt"
+    expected_output: "deleted"
+    expect:
+      output_not_contains: "error"
+      latency_under: 3000

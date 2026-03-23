@@ -1,0 +1,12 @@
+name: smoke
+description: "Verify eval runner itself is working"
+server:
+  command: node
+  args: ["dist/index.js"]
+steps:
+  - id: list_check
+    description: "List available test cases and verify smoke fixture appears"
+    tool: list_cases
+    input: {}
+    expect:
+      output_contains: "smoke"

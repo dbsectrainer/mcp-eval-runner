@@ -1,0 +1,70 @@
+name: mcp_memory_reference
+description: >
+  Reference eval suite for the official MCP Memory server
+  (github.com/modelcontextprotocol/servers/tree/main/src/memory).
+  Covers entity creation, relation creation, search, and deletion.
+  Set MCP_MEMORY_CMD to the path of your built memory server binary,
+  or remove the server block to run in simulation mode.
+
+server:
+  command: node
+  args: ["${MCP_MEMORY_CMD:-/usr/local/bin/mcp-memory}"]
+
+steps:
+  - id: create_entity
+    description: Create a test entity in the knowledge graph
+    tool: create_entities
+    input:
+      entities:
+        - name: TestProject
+          entityType: Project
+          observations:
+            - "A test project created by mcp-eval-runner"
+    expected_output: "TestProject"
+    expect:
+      output_contains: "TestProject"
+      latency_under: 5000
+
+  - id: create_relation
+    description: Create a relation between entities
+    tool: create_relations
+    input:
+      relations:
+        - from: TestProject
+          to: mcp-eval-runner
+          relationType: tested_by
+    expected_output: "tested_by"
+    expect:
+      output_contains: "tested_by"
+      latency_under: 5000
+
+  - id: search_nodes
+    description: Search for the entity we just created
+    tool: search_nodes
+    input:
+      query: TestProject
+    expected_output: "TestProject"
+    expect:
+      output_contains: "TestProject"
+      output_not_contains: "error"
+      latency_under: 5000
+
+  - id: read_graph
+    description: Read the full graph and verify structure
+    tool: read_graph
+    input: {}
+    expected_output: "TestProject"
+    expect:
+      output_contains: "TestProject"
+      latency_under: 5000
+
+  - id: delete_entity
+    description: Clean up — delete the test entity
+    tool: delete_entities
+    input:
+      entityNames:
+        - TestProject
+    expected_output: "deleted"
+    expect:
+      output_not_contains: "error"
+      latency_under: 5000

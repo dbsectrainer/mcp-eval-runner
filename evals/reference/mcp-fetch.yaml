@@ -1,0 +1,46 @@
+name: mcp_fetch_reference
+description: >
+  Reference eval suite for the official MCP Fetch server
+  (github.com/modelcontextprotocol/servers/tree/main/src/fetch).
+  Covers URL fetching in multiple formats and robots.txt handling.
+
+server:
+  command: uvx
+  args: ["mcp-server-fetch"]
+
+steps:
+  - id: fetch_html
+    description: Fetch a URL and return as markdown
+    tool: fetch
+    input:
+      url: "https://example.com"
+      max_length: 1000
+    expected_output: "Example Domain"
+    expect:
+      output_contains: "Example Domain"
+      output_not_contains: "error"
+      latency_under: 10000
+
+  - id: fetch_raw
+    description: Fetch raw HTML content
+    tool: fetch
+    input:
+      url: "https://example.com"
+      raw: true
+      max_length: 500
+    expected_output: "<html"
+    expect:
+      output_matches: "<html|<!DOCTYPE"
+      latency_under: 10000
+
+  - id: fetch_with_start_index
+    description: Fetch with pagination offset
+    tool: fetch
+    input:
+      url: "https://example.com"
+      start_index: 100
+      max_length: 200
+    expected_output: ""
+    expect:
+      output_not_contains: "error"
+      latency_under: 10000

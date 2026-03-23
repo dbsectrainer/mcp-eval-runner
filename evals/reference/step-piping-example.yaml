@@ -1,0 +1,25 @@
+name: step_piping_example
+description: >
+  Demonstrates step output piping: the output of step_1 is injected into
+  step_2's input using the {{steps.<id>.output}} placeholder syntax.
+  This fixture runs in simulation mode (no server block).
+
+steps:
+  - id: step_1
+    description: First step — produces output that step_2 will consume
+    tool: search
+    input:
+      query: "mcp eval runner"
+    expected_output: "result: mcp-eval-runner v1.0"
+    expect:
+      output_contains: "mcp-eval-runner"
+
+  - id: step_2
+    description: Second step — input references step_1's output via placeholder
+    tool: summarize
+    input:
+      # {{steps.step_1.output}} is replaced at runtime with step_1's actual output
+      text: "{{steps.step_1.output}}"
+    expected_output: "Summary: mcp-eval-runner v1.0"
+    expect:
+      output_contains: "Summary"
