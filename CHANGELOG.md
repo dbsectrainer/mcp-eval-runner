@@ -5,6 +5,16 @@ All notable changes to MCP Eval Runner will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.0.0 (2026-03-23)
+
+
+### Features
+
+* add mcpName and prepublishOnly for npm/registry publication ([bf87c24](https://github.com/dbsectrainer/mcp-eval-runner/commit/bf87c24be885d60955c88564142a2b16825f9c42))
+* add server.json for official MCP registry ([835c1c1](https://github.com/dbsectrainer/mcp-eval-runner/commit/835c1c199b6f5fe67df896cd0a5feed669c21e1c))
+* add smithery.yaml for Smithery deployment ([b9b16d6](https://github.com/dbsectrainer/mcp-eval-runner/commit/b9b16d6d49b35b3795c86f308d2e51dc19b13ff2))
+* initial release v1.0.0 ([2ece06a](https://github.com/dbsectrainer/mcp-eval-runner/commit/2ece06a861f2ac74d25ebae5095bccb85853fa39))
+
 ## [Unreleased]
 
 ## [1.0.0] - 2026-03-12
